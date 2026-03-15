@@ -19,7 +19,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       'description':
           'Discover amazing products and enjoy a seamless shopping experience right at your fingertips.',
       'image':
-          'https://images.unsplash.com/photo-1758273705998-05655eea4635?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
+          'assets/welcome.png',
       'icon': Icons.shopping_bag_outlined,
       'color': const Color(0xFF2563EB),
     },
@@ -28,7 +28,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       'description':
           'Get your orders delivered quickly and safely to your doorstep with real-time tracking.',
       'image':
-          'https://images.unsplash.com/photo-1768121496520-3bbd212deab0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
+          'assets/delivery.png',
       'icon': Icons.local_shipping_outlined,
       'color': const Color(0xFF2563EB),
     },
@@ -37,7 +37,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       'description':
           'Save more with our special discounts, flash sales, and exclusive member benefits.',
       'image':
-          'https://images.unsplash.com/photo-1527264935190-1401c51b5bbc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080',
+          'assets/deal.png',
       'icon': Icons.local_offer_outlined,
       'color': const Color(0xFF2563EB),
     },
@@ -207,26 +207,11 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
-            child: Image.network(
-              screen['image'] as String,
-              height: 280,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Container(
-                  height: 280,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Center(
-                    child: CircularProgressIndicator(
-                      color: Color(0xFF2563EB),
-                    ),
-                  ),
-                );
-              },
+            child: Image.asset(
+            screen['image'] as String,
+            height: 280,
+            width: double.infinity,
+            fit: BoxFit.cover,
             ),
           ),
         ),
