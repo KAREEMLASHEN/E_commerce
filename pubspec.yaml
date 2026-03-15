@@ -28,7 +28,7 @@ flutter:
   assets:
     - assets/welcome.png
     - assets/delivery.png
-    - assets/deals.png
+    - assets/deal.png
   
   uses-material-design: true
 
