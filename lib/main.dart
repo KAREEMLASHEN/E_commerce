@@ -15,6 +15,7 @@ void main() async {
   );
 
   final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('seen_onboarding', false); // ده زياده لحد ما نخلص الابلكيشن علشان ال onboarding تشتغل مع كل رن
   final seenOnboarding = prefs.getBool('seen_onboarding') ?? false;
 
   await Future.delayed(const Duration(seconds: 3));

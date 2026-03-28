@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:google_sign_in/google_sign_in.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -29,6 +29,29 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } finally {
       setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) return;
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      // TODO: Navigate to Home
+
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'Google Sign-In failed')),
+      );
     }
   }
 
@@ -173,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             label: 'Google',
                             icon: const Icon(Icons.g_mobiledata,
                                 size: 24, color: Color(0xFF4285F4)),
-                            onTap: () {},
+                            onTap: _handleGoogleSignIn,
                           ),
                         ),
                         const SizedBox(width: 12),
