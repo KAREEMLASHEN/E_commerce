@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "493887585590",
+    "project_id": "majara-388b5",
+    "storage_bucket": "majara-388b5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:493887585590:android:3a8b9e439476b55f10c797",
+        "android_client_info": {
+          "package_name": "com.example.ecommerce_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxW9ATY-Ql0QABsY-psGyJvOr5dBXS4A0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
