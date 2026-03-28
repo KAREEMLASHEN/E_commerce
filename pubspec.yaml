@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: ecommerce_app
 description: "A new Flutter project."
 
@@ -43,3 +44,50 @@ flutter_native_splash:
   color: "#ffffff"   
   android: true
   ios: true
+=======
+name: ecommerce_app
+description: "A new Flutter project."
+
+publish_to: 'none' 
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.1
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.9
+  flutter_lints: ^6.0.0
+
+
+flutter:
+
+  assets:
+    - assets/welcome.png
+    - assets/delivery.png
+    - assets/deal.png
+  
+  uses-material-design: true
+
+  
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon.png"
+
+flutter_native_splash:
+  color: "#ffffff"   
+  android: true
+  ios: true
+>>>>>>> 48cd10b30859869fadb9dc3105e9b514bac01d7b
