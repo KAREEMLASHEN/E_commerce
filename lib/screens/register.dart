@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -47,6 +48,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
       setState(() => _isLoading = false);
     }
   }
+  Future<void> _handleGoogleSignIn() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) return;
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      // TODO: Navigate to Home
+
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'Google Sign-In failed')),
+      );
+    }
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -191,7 +215,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ]),
                       const SizedBox(height: 20),
                       Row(children: [
-                        Expanded(child: _SocialButton(label: 'Google', icon: const Icon(Icons.g_mobiledata, size: 24, color: Color(0xFF4285F4)), onTap: () {})),
+                        Expanded(child: _SocialButton(label: 'Google', icon: const Icon(Icons.g_mobiledata, size: 24, color: Color(0xFF4285F4)), onTap: _handleGoogleSignIn,)),
                         const SizedBox(width: 12),
                         Expanded(child: _SocialButton(label: 'Apple', icon: const Icon(Icons.apple, size: 20, color: Color(0xFF374151)), onTap: () {})),
                       ]),
