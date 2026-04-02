@@ -3,6 +3,8 @@ import 'register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'Home_screen.dart';
+import 'package:provider/provider.dart';
+import '../providers/theme.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -71,21 +73,46 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {final themeProvider = Provider.of<ThemeProvider>(context);
+    bool isDark = themeProvider.themeMode == ThemeMode.dark || 
+                (themeProvider.themeMode == ThemeMode.system && 
+                 MediaQuery.of(context).platformBrightness == Brightness.dark);
+
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFEFF6FF), Color(0xFFFFFFFF), Color(0xFFF5F3FF)],
+            colors: isDark 
+              ? [const Color(0xFF0F172A), const Color(0xFF1E293B), const Color(0xFF0F172A)]
+              : [const Color(0xFFEFF6FF), const Color(0xFFFFFFFF), const Color(0xFFF5F3FF)],
           ),
         ),
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
             child: Column(
               children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        isDark ? Icons.dark_mode : Icons.light_mode,
+                        color: isDark ? Colors.amber : Colors.grey,
+                        size: 20,
+                      ),
+                      Switch(
+                        value: isDark,
+                        activeColor: const Color(0xFF3B82F6),
+                        onChanged: (value) => themeProvider.toggleTheme(value),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
                 Container(
                   width: 64,
                   height: 64,
@@ -97,23 +124,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Colors.white, size: 32),
                 ),
                 const SizedBox(height: 16),
-                const Text('Welcome Back',
+                Text('Welcome Back',
                     style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF111827))),
+                        color: isDark ? Colors.white : const Color(0xFF111827))),
                 const SizedBox(height: 8),
-                const Text('Sign in to continue shopping',
-                    style: TextStyle(fontSize: 15, color: Color(0xFF6B7280))),
+                Text('Sign in to continue shopping',
+                    style: TextStyle(fontSize: 15, color: isDark ? Colors.white70 : const Color(0xFF6B7280))),
                 const SizedBox(height: 32),
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDark ? const Color(0xFF1E293B) : Colors.white,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        color: Colors.black.withValues(alpha:isDark ? 0.3 : 0.08),
                         blurRadius: 20,
                         offset: const Offset(0, 4),
                       ),
@@ -122,8 +149,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Email Address',
-                          style: TextStyle(fontSize: 14, color: Color(0xFF374151))),
+                      Text('Email Address',
+                          style: TextStyle(fontSize: 14, color: isDark ? Colors.white70 : const Color(0xFF374151))),
                       const SizedBox(height: 8),
                       _buildTextField(
                         controller: _emailController,
@@ -132,8 +159,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         keyboardType: TextInputType.emailAddress,
                       ),
                       const SizedBox(height: 20),
-                      const Text('Password',
-                          style: TextStyle(fontSize: 14, color: Color(0xFF374151))),
+                      Text('Password',
+                          style: TextStyle(fontSize: 14, color: isDark ? Colors.white70 : const Color(0xFF374151))),
                       const SizedBox(height: 8),
                       _buildTextField(
                         controller: _passwordController,
@@ -188,14 +215,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 24),
                       Row(children: [
-                        const Expanded(child: Divider(color: Color(0xFFE5E7EB))),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12),
+                        Expanded(child: Divider(color: isDark ? Colors.white12 : const Color(0xFFE5E7EB))),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: Text('Or continue with',
                               style: TextStyle(
-                                  color: Color(0xFF9CA3AF), fontSize: 13)),
+                                  color: isDark ? Colors.white38 : const Color(0xFF9CA3AF), fontSize: 13)),
                         ),
-                        const Expanded(child: Divider(color: Color(0xFFE5E7EB))),
+                        Expanded(child: Divider(color: isDark ? Colors.white12 : const Color(0xFFE5E7EB))),
                       ]),
                       const SizedBox(height: 20),
                       Row(children: [
@@ -211,8 +238,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         Expanded(
                           child: _SocialButton(
                             label: 'Apple',
-                            icon: const Icon(Icons.apple,
-                                size: 20, color: Color(0xFF374151)),
+                            icon: Icon(Icons.apple,
+                                size: 20, color: isDark ? Colors.white : const Color(0xFF374151)),
                             onTap: () {},
                           ),
                         ),
@@ -222,8 +249,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 24),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  const Text("Don't have an account? ",
-                      style: TextStyle(color: Color(0xFF6B7280), fontSize: 14)),
+                  Text("Don't have an account? ",
+                      style: TextStyle(color: isDark ? Colors.white70 : const Color(0xFF6B7280), fontSize: 14)),
                   GestureDetector(
                     onTap: () => Navigator.push(context,
                         MaterialPageRoute(builder: (_) => const RegisterScreen())),
@@ -239,42 +266,48 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
-    );
-  }
+    );}
 
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String hint,
-    required IconData icon,
-    bool obscure = false,
-    Widget? suffixIcon,
-    TextInputType? keyboardType,
-  }) {
-    return TextField(
+ Widget _buildTextField({
+  required TextEditingController controller,
+  required String hint,
+  required IconData icon,
+  bool obscure = false,
+  Widget? suffixIcon,
+  TextInputType? keyboardType,
+}) {
+  bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+  return Container(
+    decoration: BoxDecoration(
+      color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF9FAFB),
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: isDark ? Colors.white10 : const Color(0xFFE5E7EB),
+      ),
+    ),
+    child: TextField(
       controller: controller,
       obscureText: obscure,
       keyboardType: keyboardType,
+      style: TextStyle(
+        color: isDark ? Colors.white : const Color(0xFF111827),
+        fontSize: 15,
+      ),
       decoration: InputDecoration(
         hintText: hint,
-        prefixIcon: Icon(icon, color: const Color(0xFF9CA3AF)),
+        hintStyle: TextStyle(
+          color: isDark ? Colors.white38 : const Color(0xFF9CA3AF),
+          fontSize: 14,
+        ),
+        prefixIcon: Icon(icon, color: const Color(0xFF2563EB), size: 20),
         suffixIcon: suffixIcon,
-        filled: true,
-        fillColor: const Color(0xFFF9FAFB),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF2563EB), width: 2),
-        ),
+        border: InputBorder.none,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class _SocialButton extends StatelessWidget {
@@ -287,24 +320,34 @@ class _SocialButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         height: 50,
         decoration: BoxDecoration(
-          border: Border.all(color: const Color(0xFFE5E7EB)),
+          border: Border.all(
+            color: isDark ? Colors.white10 : const Color(0xFFE5E7EB),
+          ),
           borderRadius: BorderRadius.circular(12),
-          color: Colors.white,
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
         ),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          icon,
-          const SizedBox(width: 8),
-          Text(label,
-              style: const TextStyle(
-                  color: Color(0xFF374151),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500)),
-        ]),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center, 
+          children: [
+            icon,
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: isDark ? Colors.white : const Color(0xFF374151),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

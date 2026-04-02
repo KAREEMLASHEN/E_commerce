@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/theme.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -8,8 +10,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0; 
-  int _selectedCategoryIndex = -1; 
+  int _currentIndex = 0;
+  int _selectedCategoryIndex = -1;
 
   final List<Map<String, dynamic>> _categories = [
     {'name': 'Tech', 'icon': Icons.devices_outlined},
@@ -48,8 +50,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    bool isDark = themeProvider.themeMode == ThemeMode.dark ||
+        (themeProvider.themeMode == ThemeMode.system &&
+            MediaQuery.of(context).platformBrightness == Brightness.dark);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F6F7),
+      backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF5F6F7),
       body: Stack(
         children: [
           CustomScrollView(
@@ -59,24 +66,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 pinned: false,
                 floating: true,
                 snap: true,
-                backgroundColor: Colors.white.withOpacity(0.9),
+                backgroundColor: isDark ? const Color(0xFF1E293B).withValues(alpha:0.9) : Colors.white.withValues(alpha:0.9),
                 elevation: 0,
-                title: const Text(
+                title: Text(
                   'MAJARA',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w800,
-                    color: Colors.black,
+                    color: isDark ? Colors.white : Colors.black,
                     letterSpacing: -1.2,
                   ),
                 ),
                 leading: IconButton(
-                  icon: const Icon(Icons.menu, color: Color(0xFFABADAE)),
+                  icon: Icon(Icons.menu, color: isDark ? Colors.white70 : const Color(0xFFABADAE)),
                   onPressed: () {},
                 ),
                 actions: [
                   IconButton(
-                    icon: const Icon(Icons.notifications_outlined, color: Color(0xFFABADAE)),
+                    icon: Icon(Icons.notifications_outlined, color: isDark ? Colors.white70 : const Color(0xFFABADAE)),
                     onPressed: () {},
                   ),
                 ],
@@ -84,11 +91,11 @@ class _HomeScreenState extends State<HomeScreen> {
               SliverToBoxAdapter(
                 child: Column(
                   children: [
-                    _buildSearchBar(),
-                    _buildHeroSection(),
-                    _buildCategoriesSection(),
-                    _buildTopTrendingSection(),
-                    _buildNewArrivalsSection(),
+                    _buildSearchBar(isDark),
+                    _buildHeroSection(isDark),
+                    _buildCategoriesSection(isDark),
+                    _buildTopTrendingSection(isDark),
+                    _buildNewArrivalsSection(isDark),
                     const SizedBox(height: 120),
                   ],
                 ),
@@ -99,38 +106,38 @@ class _HomeScreenState extends State<HomeScreen> {
             bottom: 20,
             left: 20,
             right: 20,
-            child: _buildBottomNavBar(),
+            child: _buildBottomNavBar(isDark),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(bool isDark) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         height: 55,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Row(
-          children: const [
-            Icon(Icons.search, color: Color(0xFFABADAE)),
-            SizedBox(width: 12),
+          children: [
+            Icon(Icons.search, color: isDark ? Colors.white60 : const Color(0xFFABADAE)),
+            const SizedBox(width: 12),
             Text(
               'What are you looking for?',
               style: TextStyle(
-                color: Color(0xFFABADAE),
+                color: isDark ? Colors.white60 : const Color(0xFFABADAE),
                 fontSize: 14,
               ),
             ),
@@ -140,13 +147,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildHeroSection() {
+  Widget _buildHeroSection(bool isDark) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
       child: Container(
         height: 500,
         decoration: BoxDecoration(
-          color: const Color(0xFFEFF1F2),
+          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF1F2),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Stack(
@@ -158,16 +165,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: double.infinity,
                 height: double.infinity,
                 fit: BoxFit.cover,
-                opacity: const AlwaysStoppedAnimation(0.6),
+                opacity: AlwaysStoppedAnimation(isDark ? 0.9 : 1.0),
               ),
             ),
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
-                  colors: [Color(0xFFEFF1F2), Colors.transparent],
+                  colors: [
+                    isDark ? const Color(0xFF0F172A).withValues(alpha:0.6) : const Color(0xFFEFF1F2),
+                    Colors.transparent
+                  ],
                 ),
               ),
             ),
@@ -181,18 +191,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFBFDBFE),
+                      color: const Color(0xFF2563EB),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text('NEW SEASON', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                    child: const Text('NEW SEASON',
+                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white)),
                   ),
                   const SizedBox(height: 24),
-                  const Text(
+                  Text(
                     'The Autumn\nSelection.',
                     style: TextStyle(
                       fontSize: 48,
                       fontWeight: FontWeight.w800,
                       height: 1.1,
+                      color: isDark ? Colors.white : Colors.black,
                     ),
                   ),
                 ],
@@ -204,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildCategoriesSection() {
+  Widget _buildCategoriesSection(bool isDark) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 32),
       child: Column(
@@ -214,12 +226,12 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Categories',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF2C2F30),
+                    color: isDark ? Colors.white : const Color(0xFF2C2F30),
                   ),
                 ),
                 TextButton(
@@ -253,11 +265,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       GestureDetector(
                         onTap: () {
                           setState(() {
-                            if (isSelected) {
-                              _selectedCategoryIndex = -1;
-                            } else {
-                              _selectedCategoryIndex = index;
-                            }
+                            _selectedCategoryIndex = isSelected ? -1 : index;
                           });
                         },
                         child: AnimatedContainer(
@@ -277,16 +285,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ],
                                     stops: [0.0, 0.5, 1.0],
                                   )
-                                : const RadialGradient(
-                                    center: Alignment(-0.3, -0.4),
+                                : RadialGradient(
+                                    center: const Alignment(-0.3, -0.4),
                                     radius: 0.8,
-                                    colors: [Color(0xFFF9FAFB), Color(0xFFD1D5DB)],
+                                    colors: isDark 
+                                        ? [const Color(0xFF334155), const Color(0xFF1E293B)]
+                                        : [const Color(0xFFF9FAFB), const Color(0xFFD1D5DB)],
                                   ),
                             boxShadow: [
                               BoxShadow(
                                 color: isSelected
-                                    ? const Color(0xFF2563EB).withOpacity(0.4)
-                                    : Colors.black.withOpacity(0.1),
+                                    ? const Color(0xFF2563EB).withValues(alpha:0.4)
+                                    : Colors.black.withValues(alpha: isDark ? 0.3 : 0.1),
                                 blurRadius: isSelected ? 15 : 10,
                                 offset: const Offset(0, 6),
                                 spreadRadius: 1,
@@ -295,7 +305,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           child: Icon(
                             category['icon'] as IconData,
-                            color: isSelected ? Colors.white : const Color(0xFF4B5563),
+                            color: isSelected ? Colors.white : (isDark ? Colors.white70 : const Color(0xFF4B5563)),
                             size: 26,
                           ),
                         ),
@@ -306,7 +316,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: isSelected ? const Color(0xFF0F172A) : const Color(0xFF4B5563),
+                          color: isSelected ? (isDark ? Colors.blue : const Color(0xFF0F172A)) : (isDark ? Colors.white60 : const Color(0xFF4B5563)),
                           letterSpacing: 1.1,
                         ),
                       ),
@@ -321,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildTopTrendingSection() {
+  Widget _buildTopTrendingSection(bool isDark) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
       child: Column(
@@ -329,20 +339,20 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Top Trending',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF2C2F30),
+                  color: isDark ? Colors.white : const Color(0xFF2C2F30),
                   letterSpacing: -0.75,
                 ),
               ),
               Row(
                 children: [
-                  _buildArrowButton(Icons.arrow_back_ios_new, () {}),
+                  _buildArrowButton(Icons.arrow_back_ios_new, () {}, isDark),
                   const SizedBox(width: 8),
-                  _buildArrowButton(Icons.arrow_forward_ios, () {}),
+                  _buildArrowButton(Icons.arrow_forward_ios, () {}, isDark),
                 ],
               ),
             ],
@@ -359,7 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             itemCount: _products.length,
             itemBuilder: (context, index) {
-              return _buildProductCard(_products[index]);
+              return _buildProductCard(_products[index], isDark);
             },
           ),
         ],
@@ -367,22 +377,22 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildArrowButton(IconData icon, VoidCallback onTap) {
+  Widget _buildArrowButton(IconData icon, VoidCallback onTap, bool isDark) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 38,
         height: 38,
         decoration: BoxDecoration(
-          border: Border.all(color: const Color(0xFFABADAE).withOpacity(0.3)),
+          border: Border.all(color: isDark ? Colors.white24 : const Color(0xFFABADAE).withValues(alpha:0.3)),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(icon, size: 12, color: const Color(0xFF2C2F30)),
+        child: Icon(icon, size: 12, color: isDark ? Colors.white : const Color(0xFF2C2F30)),
       ),
     );
   }
 
-  Widget _buildProductCard(Map<String, dynamic> product) {
+  Widget _buildProductCard(Map<String, dynamic> product, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -405,10 +415,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
+                    color: isDark ? const Color(0xFF1E293B).withValues(alpha:0.9) : Colors.white.withValues(alpha:0.9),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.favorite_border, size: 16, color: Color(0xFF2C2F30)),
+                  child: Icon(Icons.favorite_border, size: 16, color: isDark ? Colors.white : const Color(0xFF2C2F30)),
                 ),
               ),
               if (product['badge'] != null)
@@ -438,7 +448,7 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: 12),
         Text(
           product['name'] as String,
-          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Color(0xFF2C2F30), height: 1.3),
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: isDark ? Colors.white : const Color(0xFF2C2F30), height: 1.3),
         ),
         const SizedBox(height: 4),
         Text(
@@ -449,15 +459,15 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildNewArrivalsSection() {
+  Widget _buildNewArrivalsSection(bool isDark) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'New Arrivals',
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: Color(0xFF2C2F30), letterSpacing: -0.75),
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: isDark ? Colors.white : const Color(0xFF2C2F30), letterSpacing: -0.75),
           ),
           const SizedBox(height: 32),
           _buildArrivalItem(
@@ -465,6 +475,7 @@ class _HomeScreenState extends State<HomeScreen> {
             tag: 'EXCLUSIVES',
             title: 'Elevated Basics',
             height: 400,
+            isDark: isDark,
           ),
           const SizedBox(height: 20),
           _buildArrivalItem(
@@ -472,6 +483,7 @@ class _HomeScreenState extends State<HomeScreen> {
             tag: 'INTERIOR',
             title: 'Living Spaces',
             height: 280,
+            isDark: isDark,
           ),
           const SizedBox(height: 20),
           _buildArrivalItem(
@@ -479,13 +491,14 @@ class _HomeScreenState extends State<HomeScreen> {
             tag: 'TECH STYLE',
             title: 'Minimal Gear',
             height: 280,
+            isDark: isDark,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildArrivalItem({required String imageUrl, required String tag, required String title, required double height}) {
+  Widget _buildArrivalItem({required String imageUrl, required String tag, required String title, required double height, required bool isDark}) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: Stack(
@@ -495,6 +508,7 @@ class _HomeScreenState extends State<HomeScreen> {
             height: height,
             width: double.infinity,
             fit: BoxFit.cover,
+            opacity: AlwaysStoppedAnimation(isDark ? 0.9: 1.0),
           ),
           Container(
             height: height,
@@ -502,7 +516,7 @@ class _HomeScreenState extends State<HomeScreen> {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.transparent, const Color(0xFF2C2F30).withOpacity(0.8)],
+                colors: [Colors.transparent, (isDark ? Colors.black : const Color(0xFF2C2F30)).withValues(alpha:0.5)],
               ),
             ),
           ),
@@ -523,7 +537,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildBottomNavBar() {
+  Widget _buildBottomNavBar(bool isDark) {
     final items = [
       {'icon': Icons.home_rounded, 'label': 'HOME'},
       {'icon': Icons.search, 'label': 'SEARCH'},
@@ -535,11 +549,11 @@ class _HomeScreenState extends State<HomeScreen> {
       height: 85,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.1),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -575,7 +589,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 boxShadow: isSelected
                     ? [
                         BoxShadow(
-                          color: const Color(0xFF2563EB).withOpacity(0.3),
+                          color: const Color(0xFF2563EB).withValues(alpha:0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         )
@@ -587,7 +601,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Icon(
                     item['icon'] as IconData,
-                    color: isSelected ? Colors.white : const Color(0xFF2C2F30),
+                    color: isSelected ? Colors.white : (isDark ? Colors.white70 : const Color(0xFF2C2F30)),
                     size: 20,
                   ),
                   if (isSelected) const SizedBox(height: 2),
