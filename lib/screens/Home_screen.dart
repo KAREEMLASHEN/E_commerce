@@ -11,9 +11,9 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
   final List<Map<String, dynamic>> _categories = [
+    {'name': 'Home', 'icon': Icons.home_outlined, 'selected': true},
+    {'name': 'Fashion', 'icon': Icons.checkroom_outlined, 'selected': false},
     {'name': 'Tech', 'icon': Icons.devices_outlined, 'selected': false},
-    {'name': 'Fashion', 'icon': Icons.checkroom_outlined, 'selected': true},
-    {'name': 'Home', 'icon': Icons.home_outlined, 'selected': false},
     {'name': 'Beauty', 'icon': Icons.face_outlined, 'selected': false},
     {'name': 'Watch', 'icon': Icons.watch_outlined, 'selected': false},
     {'name': 'Sport', 'icon': Icons.sports_soccer_outlined, 'selected': false},
