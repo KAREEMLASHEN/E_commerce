@@ -1,5 +1,7 @@
+import 'package:ecommerce_app/screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../providers/theme.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -57,6 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF5F6F7),
+      drawer: _buildDrawer(context, isDark),
       body: Stack(
         children: [
           CustomScrollView(
@@ -66,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 pinned: false,
                 floating: true,
                 snap: true,
-                backgroundColor: isDark ? const Color(0xFF1E293B).withValues(alpha:0.9) : Colors.white.withValues(alpha:0.9),
+                backgroundColor: isDark ? const Color(0xFF1E293B).withValues(alpha: 0.9) : Colors.white.withValues(alpha: 0.9),
                 elevation: 0,
                 title: Text(
                   'MAJARA',
@@ -77,9 +80,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     letterSpacing: -1.2,
                   ),
                 ),
-                leading: IconButton(
-                  icon: Icon(Icons.menu, color: isDark ? Colors.white70 : const Color(0xFFABADAE)),
-                  onPressed: () {},
+                leading: Builder(
+                  builder: (context) => IconButton(
+                    icon: Icon(Icons.menu, color: isDark ? Colors.white70 : const Color(0xFFABADAE)),
+                    onPressed: () => Scaffold.of(context).openDrawer(),
+                  ),
                 ),
                 actions: [
                   IconButton(
@@ -110,6 +115,120 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildDrawer(BuildContext context, bool isDark) {
+    final User? user = FirebaseAuth.instance.currentUser;
+    String displayName = "Guest User";
+    if (user != null) {
+      if (user.displayName != null && user.displayName!.isNotEmpty) {
+        displayName = user.displayName!;
+      } else if (user.email != null) {
+        displayName = user.email!.split('@')[0];
+      }
+    }
+
+    return Drawer(
+      backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
+      child: Column(
+        children: [
+          UserAccountsDrawerHeader(
+            decoration: const BoxDecoration(
+              color: Color(0xFF2563EB),
+            ),
+            currentAccountPicture: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Text(
+                displayName.isNotEmpty ? displayName[0].toUpperCase() : "U",
+                style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF2563EB),
+                ),
+              ),
+            ),
+            accountName: Text(
+              displayName,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            accountEmail: Text(
+              user?.email ?? "No email found",
+              style: const TextStyle(color: Colors.white70),
+            ),
+          ),
+
+          _buildDrawerItem(
+            icon: Icons.person_outline_rounded,
+            title: 'Profile',
+            isDark: isDark,
+            onTap: () {
+              Navigator.pop(context); 
+            },
+          ),
+          _buildDrawerItem(
+            icon: Icons.settings_outlined,
+            title: 'Settings',
+            isDark: isDark,
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+
+          const Spacer(), 
+          
+          Divider(color: isDark ? Colors.white12 : Colors.grey[300]),
+
+          _buildDrawerItem(
+  icon: Icons.logout_rounded,
+  title: 'Logout',
+  isDark: isDark,
+  textColor: Colors.red,
+  onTap: () async {
+    try {
+      Navigator.pop(context); 
+
+      await FirebaseAuth.instance.signOut();
+
+      if (context.mounted) {
+        Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+      }
+    } catch (e) {
+      debugPrint("Error during logout: $e");
+    }
+  },
+),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem({
+    required IconData icon,
+    required String title,
+    required bool isDark,
+    required VoidCallback onTap,
+    Color? textColor,
+  }) {
+    return ListTile(
+      leading: Icon(
+        icon, 
+        color: textColor ?? (isDark ? Colors.white70 : Colors.black87),
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: textColor ?? (isDark ? Colors.white : Colors.black87),
+          fontSize: 16,
+          fontWeight: textColor != null ? FontWeight.bold : FontWeight.normal,
+        ),
+      ),
+      onTap: onTap,
     );
   }
 
@@ -175,7 +294,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                   colors: [
-                    isDark ? const Color(0xFF0F172A).withValues(alpha:0.6) : const Color(0xFFEFF1F2),
+                    isDark ? const Color(0xFF0F172A).withValues(alpha: 0.6) : const Color(0xFFEFF1F2),
                     Colors.transparent
                   ],
                 ),
@@ -288,14 +407,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : RadialGradient(
                                     center: const Alignment(-0.3, -0.4),
                                     radius: 0.8,
-                                    colors: isDark 
+                                    colors: isDark
                                         ? [const Color(0xFF334155), const Color(0xFF1E293B)]
                                         : [const Color(0xFFF9FAFB), const Color(0xFFD1D5DB)],
                                   ),
                             boxShadow: [
                               BoxShadow(
                                 color: isSelected
-                                    ? const Color(0xFF2563EB).withValues(alpha:0.4)
+                                    ? const Color(0xFF2563EB).withValues(alpha: 0.4)
                                     : Colors.black.withValues(alpha: isDark ? 0.3 : 0.1),
                                 blurRadius: isSelected ? 15 : 10,
                                 offset: const Offset(0, 6),
@@ -384,7 +503,7 @@ class _HomeScreenState extends State<HomeScreen> {
         width: 38,
         height: 38,
         decoration: BoxDecoration(
-          border: Border.all(color: isDark ? Colors.white24 : const Color(0xFFABADAE).withValues(alpha:0.3)),
+          border: Border.all(color: isDark ? Colors.white24 : const Color(0xFFABADAE).withValues(alpha: 0.3)),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(icon, size: 12, color: isDark ? Colors.white : const Color(0xFF2C2F30)),
@@ -415,7 +534,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E293B).withValues(alpha:0.9) : Colors.white.withValues(alpha:0.9),
+                    color: isDark ? const Color(0xFF1E293B).withValues(alpha: 0.9) : Colors.white.withValues(alpha: 0.9),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(Icons.favorite_border, size: 16, color: isDark ? Colors.white : const Color(0xFF2C2F30)),
@@ -508,7 +627,7 @@ class _HomeScreenState extends State<HomeScreen> {
             height: height,
             width: double.infinity,
             fit: BoxFit.cover,
-            opacity: AlwaysStoppedAnimation(isDark ? 0.9: 1.0),
+            opacity: AlwaysStoppedAnimation(isDark ? 0.9 : 1.0),
           ),
           Container(
             height: height,
@@ -516,7 +635,7 @@ class _HomeScreenState extends State<HomeScreen> {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.transparent, (isDark ? Colors.black : const Color(0xFF2C2F30)).withValues(alpha:0.5)],
+                colors: [Colors.transparent, (isDark ? Colors.black : const Color(0xFF2C2F30)).withValues(alpha: 0.5)],
               ),
             ),
           ),
@@ -589,7 +708,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 boxShadow: isSelected
                     ? [
                         BoxShadow(
-                          color: const Color(0xFF2563EB).withValues(alpha:0.3),
+                          color: const Color(0xFF2563EB).withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         )

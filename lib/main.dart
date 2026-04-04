@@ -1,3 +1,5 @@
+import 'package:ecommerce_app/screens/Home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -17,10 +19,9 @@ void main() async {
   );
 
   final prefs = await SharedPreferences.getInstance();
-  await prefs.setBool('seen_onboarding', false); // ده زياده لحد ما نخلص الابلكيشن علشان ال onboarding تشتغل مع كل رن
+  await prefs.setBool('seen_onboarding', false); // زياده لحد ما نخلص الابلكيشن ده اللي بيخليه كل مره كانها اول مره
   final seenOnboarding = prefs.getBool('seen_onboarding') ?? false;
 
-  await Future.delayed(const Duration(milliseconds: 500));
   FlutterNativeSplash.remove();
 
   runApp(
@@ -62,7 +63,27 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: seenOnboarding ? const LoginScreen() : const OnboardingScreen(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          if (snapshot.hasData) {
+            return const HomeScreen();
+          }
+
+          return seenOnboarding ? const LoginScreen() : const OnboardingScreen();
+        },
+      ),
+      routes: {
+        '/onboarding': (context) => const OnboardingScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/home': (context) => const HomeScreen(),
+      },
     );
   }
 }
