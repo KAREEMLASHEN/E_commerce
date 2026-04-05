@@ -5,6 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'Home_screen.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme.dart';
+import '../widgets/floating_stars.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -79,7 +80,9 @@ class _LoginScreenState extends State<LoginScreen> {
                  MediaQuery.of(context).platformBrightness == Brightness.dark);
 
     return Scaffold(
-      body: Container(
+      body: Stack( 
+        children: [
+          Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -266,6 +269,8 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
+      const FloatingStars(),
+      ])
     );}
 
  Widget _buildTextField({

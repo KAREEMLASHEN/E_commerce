@@ -5,6 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'Home_screen.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme.dart';
+import '../widgets/floating_stars.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -266,6 +267,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
           ),
+        const FloatingStars()
         ],
       ),
     );

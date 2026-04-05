@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../providers/theme.dart';
+import 'profile.dart';
+import '../widgets/floating_stars.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -113,6 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
             right: 20,
             child: _buildBottomNavBar(isDark),
           ),
+        const FloatingStars(),
         ],
       ),
     );
@@ -163,13 +166,17 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           _buildDrawerItem(
-            icon: Icons.person_outline_rounded,
-            title: 'Profile',
-            isDark: isDark,
-            onTap: () {
-              Navigator.pop(context); 
-            },
-          ),
+  icon: Icons.person_outline_rounded,
+  title: 'Profile',
+  isDark: isDark,
+  onTap: () {
+    Navigator.pop(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const ProfileScreen()),
+    );
+  },
+),
           _buildDrawerItem(
             icon: Icons.settings_outlined,
             title: 'Settings',
@@ -686,7 +693,15 @@ class _HomeScreenState extends State<HomeScreen> {
           final isSelected = _currentIndex == index;
 
           return GestureDetector(
-            onTap: () => setState(() => _currentIndex = index),
+            onTap: (){
+              setState(() => _currentIndex = index);
+              if(index == 4){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_)=> const ProfileScreen())
+                );
+              }
+            },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               width: 60,
