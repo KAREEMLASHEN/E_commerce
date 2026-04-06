@@ -19,7 +19,7 @@ void main() async {
   );
 
   final prefs = await SharedPreferences.getInstance();
-  await prefs.setBool('seen_onboarding', false); // زياده لحد ما نخلص الابلكيشن ده اللي بيخليه كل مره كانها اول مره
+  await prefs.setBool('seen_onboarding', true); // زياده لحد ما نخلص الابلكيشن ده اللي بيخليه كل مره كانها اول مره
   final seenOnboarding = prefs.getBool('seen_onboarding') ?? false;
 
   FlutterNativeSplash.remove();
